@@ -1,4 +1,4 @@
-package com.jivan.expense_tracker.auth;
+package com.jivan.expense_tracker.ui.auth;
 
 import android.os.Bundle;
 import android.widget.Button;

@@ -1,4 +1,4 @@
-package com.jivan.expense_tracker.auth;
+package com.jivan.expense_tracker.ui.auth;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -17,10 +17,10 @@ import android.widget.TextView;
 
 import com.jivan.expense_tracker.R;
 
-public class SignupFragment extends Fragment {
+public class LoginFragment extends Fragment {
 
 
-    public SignupFragment() {
+    public LoginFragment() {
         // Required empty public constructor
     }
 
@@ -34,36 +34,36 @@ public class SignupFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_signup, container, false);
-
+        View view = inflater.inflate(R.layout.fragment_login, container, false);
         assert container != null;
-        TextView loginRedirect = view.findViewById(R.id.loginRedirect);
-        String fullText = "Already have an Account? Login instead";
-        String loginText = "Login instead";
+        TextView signupRedirect = view.findViewById(R.id.signupRedirect);
+        String fullText = "No Account? Signup Now";
+        String signupText = "Signup Now";
+        SpannableString spannableText = getSpannableString(fullText, signupText);
 
-        SpannableString spannableText = getSpannableTextString(fullText, loginText);
-        loginRedirect.setText(spannableText);
-        loginRedirect.setMovementMethod(LinkMovementMethod.getInstance());
-        loginRedirect.setHighlightColor(Color.TRANSPARENT);
+        signupRedirect.setText(spannableText);
+        signupRedirect.setMovementMethod(LinkMovementMethod.getInstance());
+        signupRedirect.setHighlightColor(Color.TRANSPARENT);
 
         return view;
     }
 
-    private SpannableString getSpannableTextString(String fullText, String loginText) {
+    @NonNull
+    private SpannableString getSpannableString(String fullText, String signupText) {
         SpannableString spannableText = new SpannableString(fullText);
 
-        int startIndex = fullText.indexOf(loginText);
-        int endIndex = startIndex + loginText.length();
-
+        int startIndex = fullText.indexOf(signupText);
+        int endIndex = startIndex + signupText.length();
         ClickableSpan clickableSpan = new ClickableSpan() {
             @Override
             public void onClick(@NonNull View view) {
+
                 if (getActivity() instanceof AuthActivity) {
                     AuthActivity authActivity = (AuthActivity) getActivity();
-                    authActivity.switchToLogin();
+                    authActivity.switchToSignup();
                 }
             }
+
         };
         spannableText.setSpan(clickableSpan, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         return spannableText;
