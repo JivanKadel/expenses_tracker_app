@@ -61,8 +61,8 @@ public class AddExpenseFragment extends Fragment {
 
         // Initialize database and repositories
         db = new ExpensesDatabaseHelper(requireContext()).getWritableDatabase();
-        expenseRepository = new ExpenseRepository(db);
-        categoryRepository = new CategoryRepository(db);
+        expenseRepository = new ExpenseRepository(getContext());
+        categoryRepository = new CategoryRepository(getContext());
 
         setupCategorySpinner();
 
