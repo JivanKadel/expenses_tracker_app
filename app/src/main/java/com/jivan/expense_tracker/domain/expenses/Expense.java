@@ -15,6 +15,9 @@ public class Expense {
 
     // Constructors, getters, setters
 
+    public Expense(){
+
+    }
     public Expense(int id, String title, double amount, Category category, Date date, String paymentMethod, String note, String currency, boolean isRecurring) {
         this.id = id;
         this.title = title;
