@@ -1,6 +1,8 @@
 package com.jivan.expense_tracker.data.expenses;
 
-public class ExpensesContract {
+import android.provider.BaseColumns;
+
+public class ExpensesContract implements BaseColumns {
     public static final String TABLE_NAME = "expenses";
 
     public static final String COLUMN_ID = "id";
