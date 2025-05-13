@@ -1,66 +1,120 @@
 package com.jivan.expense_tracker.ui.expenses;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.jivan.expense_tracker.R;
+import com.jivan.expense_tracker.data.expenses.CategoryRepository;
+import com.jivan.expense_tracker.data.expenses.ExpenseRepository;
+import com.jivan.expense_tracker.data.expenses.ExpensesDatabaseHelper;
+import com.jivan.expense_tracker.domain.expenses.Category;
+import com.jivan.expense_tracker.domain.expenses.Expense;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link AddExpenseFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
+
 public class AddExpenseFragment extends Fragment {
+    private EditText etTitle, etAmount, etDate, etPaymentMethod, etNote;
+    private Spinner spinnerCategory;
+    private SwitchCompat switchRecurring;
+    private Button btnSave;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private ExpenseRepository expenseRepository;
+    private CategoryRepository categoryRepository;
+    private SQLiteDatabase db;
+    private List<Category> categoryList;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public AddExpenseFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment AddExpenseFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static AddExpenseFragment newInstance(String param1, String param2) {
-        AddExpenseFragment fragment = new AddExpenseFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
+    @Nullable
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_add_expense, container, false);
+
+        // Initialize views
+        etTitle = view.findViewById(R.id.etExpenseTitle);
+        etAmount = view.findViewById(R.id.etExpenseAmount);
+        etDate = view.findViewById(R.id.etExpenseDate);
+        etPaymentMethod = view.findViewById(R.id.etExpensePaymentMethod);
+        etNote = view.findViewById(R.id.etExpenseNote);
+        spinnerCategory = view.findViewById(R.id.spinnerExpenseCategory);
+        switchRecurring = view.findViewById(R.id.switchExpenseIsRecurring);
+        btnSave = view.findViewById(R.id.btnSaveExpense);
+
+        // Initialize database and repositories
+        db = new ExpensesDatabaseHelper(requireContext()).getWritableDatabase();
+        expenseRepository = new ExpenseRepository(db);
+        categoryRepository = new CategoryRepository(db);
+
+        setupCategorySpinner();
+
+        btnSave.setOnClickListener(v -> saveExpense());
+
+        return view;
+    }
+
+    private void setupCategorySpinner() {
+        categoryList = categoryRepository.getAllCategories();
+        List<String> categoryNames = new ArrayList<>();
+        for (Category c : categoryList) {
+            categoryNames.add(c.getName());
         }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(),
+                android.R.layout.simple_spinner_item, categoryNames);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerCategory.setAdapter(adapter);
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_add_expense, container, false);
+    private void saveExpense() {
+        String title = etTitle.getText().toString();
+        double amount = Double.parseDouble(etAmount.getText().toString());
+        String dateStr = etDate.getText().toString();
+        String paymentMethod = etPaymentMethod.getText().toString();
+        String note = etNote.getText().toString();
+        boolean isRecurring = switchRecurring.isChecked();
+        String currency = "USD"; // hardcoded or get from settings
+
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            Date date = sdf.parse(dateStr);
+
+            int selectedIndex = spinnerCategory.getSelectedItemPosition();
+            Category selectedCategory = categoryList.get(selectedIndex);
+
+            Expense expense = new Expense();
+            expense.setTitle(title);
+            expense.setAmount(amount);
+            expense.setDate(date);
+            expense.setCategory(selectedCategory);
+            expense.setPaymentMethod(paymentMethod);
+            expense.setNote(note);
+            expense.setRecurring(isRecurring);
+            expense.setCurrency(currency);
+
+            expenseRepository.addExpense(expense);
+
+            Toast.makeText(getContext(), "Expense saved!", Toast.LENGTH_SHORT).show();
+        } catch (ParseException | NumberFormatException e) {
+            Toast.makeText(getContext(), "Invalid input", Toast.LENGTH_SHORT).show();
+        }
     }
 }
