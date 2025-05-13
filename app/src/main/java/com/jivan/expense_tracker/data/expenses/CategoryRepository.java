@@ -1,9 +1,11 @@
 package com.jivan.expense_tracker.data.expenses;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.jivan.expense_tracker.data.AppDatabaseHelper;
 import com.jivan.expense_tracker.domain.expenses.Category;
 
 import java.util.ArrayList;
@@ -11,12 +13,14 @@ import java.util.List;
 
 public class CategoryRepository {
     private SQLiteDatabase db;
+    AppDatabaseHelper dbHelper;
 
-    public CategoryRepository(SQLiteDatabase db) {
-        this.db = db;
+    public CategoryRepository(Context context) {
+        dbHelper = new AppDatabaseHelper(context);
     }
 
     public int addCategory(Category category) {
+        db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(CategoryContract.COLUMN_NAME, category.getName());
         values.put(CategoryContract.COLUMN_GROUP, category.getGroup());
@@ -25,6 +29,7 @@ public class CategoryRepository {
     }
 
     public List<Category> getAllCategories() {
+        db = dbHelper.getReadableDatabase();
         List<Category> categories = new ArrayList<>();
         Cursor cursor = db.query(CategoryContract.TABLE_NAME, null, null, null, null, null, null);
         int idIndex = cursor.getColumnIndexOrThrow(CategoryContract.COLUMN_ID);
@@ -45,6 +50,7 @@ public class CategoryRepository {
     }
 
     public int updateCategory(Category category) {
+        db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(CategoryContract.COLUMN_NAME, category.getName());
         values.put(CategoryContract.COLUMN_GROUP, category.getGroup());
@@ -54,6 +60,7 @@ public class CategoryRepository {
     }
 
     public int deleteCategory(int id) {
+        db = dbHelper.getWritableDatabase();
         return db.delete(CategoryContract.TABLE_NAME, CategoryContract.COLUMN_ID + " = ?", new String[]{String.valueOf(id)});
     }
 }

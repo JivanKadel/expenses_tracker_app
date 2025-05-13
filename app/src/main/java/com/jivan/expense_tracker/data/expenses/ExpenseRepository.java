@@ -1,9 +1,11 @@
 package com.jivan.expense_tracker.data.expenses;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.jivan.expense_tracker.data.AppDatabaseHelper;
 import com.jivan.expense_tracker.domain.expenses.Category;
 import com.jivan.expense_tracker.domain.expenses.Expense;
 import com.jivan.expense_tracker.util.Helper;
@@ -12,15 +14,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ExpenseRepository {
-    private SQLiteDatabase db;
-    private CategoryRepository categoryRepo;
+    AppDatabaseHelper dbHelper;
+    SQLiteDatabase db;
 
-    public ExpenseRepository(SQLiteDatabase db) {
-        this.db = db;
-        this.categoryRepo = new CategoryRepository(db);
+    public ExpenseRepository(Context context) {
+        dbHelper = new AppDatabaseHelper(context);
     }
 
     public long addExpense(Expense expense) {
+        db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put(ExpensesContract.COLUMN_TITLE, expense.getTitle());
@@ -36,6 +38,7 @@ public class ExpenseRepository {
     }
 
     public List<Expense> getAllExpenses() {
+        db = dbHelper.getReadableDatabase();
         List<Expense> expenses = new ArrayList<>();
         String query = "SELECT e.*, c." + CategoryContract.COLUMN_NAME + ", c." + CategoryContract.COLUMN_GROUP +
                 ", c." + CategoryContract.COLUMN_IS_CUSTOM + " FROM " + ExpensesContract.TABLE_NAME +
@@ -82,8 +85,27 @@ public class ExpenseRepository {
         return expenses;
     }
 
-    public int deleteExpense(int expenseId) {
+    public int deleteExpenseById(int expenseId) {
+        db = dbHelper.getWritableDatabase();
         return db.delete(ExpensesContract.TABLE_NAME, ExpensesContract.COLUMN_ID + " = ?", new String[]{String.valueOf(expenseId)});
+    }
+    public int updateExpense(Expense expense) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(ExpensesContract.COLUMN_TITLE, expense.getTitle());
+        values.put(ExpensesContract.COLUMN_AMOUNT, expense.getAmount());
+        values.put(ExpensesContract.COLUMN_CATEGORY_ID, expense.getCategory().getId());
+        values.put(ExpensesContract.COLUMN_DATE, expense.getDate().getTime());
+        values.put(ExpensesContract.COLUMN_PAYMENT_METHOD, expense.getPaymentMethod());
+        values.put(ExpensesContract.COLUMN_NOTE, expense.getNote());
+        values.put(ExpensesContract.COLUMN_CURRENCY, expense.getCurrency());
+        values.put(ExpensesContract.COLUMN_IS_RECURRING, expense.isRecurring() ? 1 : 0);
+
+        return db.update(ExpensesContract.TABLE_NAME,
+                values,
+                ExpensesContract._ID + "=?",
+                new String[]{String.valueOf(expense.getId())});
     }
 
 
