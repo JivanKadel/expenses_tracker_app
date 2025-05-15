@@ -35,9 +35,13 @@ android {
     sourceSets {
         getByName("main") {
             res {
-                srcDirs("src\\main\\res", "src\\main\\res\\layouts\\auth",
+                srcDirs(
                     "src\\main\\res",
-                    "src\\main\\res\\layouts\\expenses", "src\\main\\res", "src\\main\\res\\layouts\\reports",
+                    "src\\main\\res\\layouts\\auth",
+                    "src\\main\\res",
+                    "src\\main\\res\\layouts\\expenses",
+                    "src\\main\\res",
+                    "src\\main\\res\\layouts\\reports",
                     "src\\main\\res",
                     "src\\main\\res\\layouts\\settings"
                 )
@@ -47,7 +51,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
@@ -58,4 +61,6 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    implementation(libs.jbcrypt)
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 }
