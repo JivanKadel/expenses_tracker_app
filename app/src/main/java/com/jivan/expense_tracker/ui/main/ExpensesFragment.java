@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.jivan.expense_tracker.R;
+import com.jivan.expense_tracker.ui.expenses.AddExpenseFragment;
 import com.jivan.expense_tracker.ui.expenses.ExpenseListFragment;
 
 
