@@ -28,7 +28,7 @@ public class ExpenseRepository {
         values.put(ExpensesContract.COLUMN_TITLE, expense.getTitle());
         values.put(ExpensesContract.COLUMN_AMOUNT, expense.getAmount());
         values.put(ExpensesContract.COLUMN_CATEGORY_ID, expense.getCategory().getId());
-        values.put(ExpensesContract.COLUMN_DATE, Helper.dataToString(expense.getDate()));
+        values.put(ExpensesContract.COLUMN_DATE, Helper.dateToString(expense.getDate()));
         values.put(ExpensesContract.COLUMN_PAYMENT_METHOD, expense.getPaymentMethod());
         values.put(ExpensesContract.COLUMN_NOTE, expense.getNote());
         values.put(ExpensesContract.COLUMN_CURRENCY, expense.getCurrency());

@@ -9,7 +9,7 @@ import java.util.Locale;
 
 public class Helper {
     @NonNull
-    public static String dataToString(Date date) {
+    public static String dateToString(Date date) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         return sdf.format(date);
     }

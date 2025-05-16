@@ -56,7 +56,7 @@ public class ExpenseDetailFragment extends Fragment {
             if (expense != null) {
                 tvTitle.setText(expense.getTitle());
                 tvAmount.setText(String.format("Rs. %s", expense.getAmount()));
-                tvDate.setText(Helper.dataToString(expense.getDate())); // format if needed
+                tvDate.setText(Helper.dateToString(expense.getDate())); // format if needed
                 tvCategory.setText(expense.getCategory().getName());
                 tvNote.setText(expense.getNote());
             } else {
