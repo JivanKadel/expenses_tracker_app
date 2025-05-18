@@ -12,8 +12,6 @@ public class Category {
     private String group;          // e.g., "Essentials"
     private boolean isCustom;      // true if user-created
 
-    // Constructors, getters, setters
-
     // Default constructor
     public Category(){
 
