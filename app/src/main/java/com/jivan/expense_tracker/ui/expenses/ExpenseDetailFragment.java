@@ -1,5 +1,7 @@
 package com.jivan.expense_tracker.ui.expenses;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -15,7 +17,10 @@ import com.jivan.expense_tracker.data.expenses.ExpenseRepository;
 import com.jivan.expense_tracker.domain.expenses.Expense;
 import com.jivan.expense_tracker.util.Helper;
 
+import java.text.MessageFormat;
+
 public class ExpenseDetailFragment extends Fragment {
+    SharedPreferences userPreferences;
 
 
     public ExpenseDetailFragment() {
@@ -47,6 +52,11 @@ public class ExpenseDetailFragment extends Fragment {
 
             Expense expense = new ExpenseRepository(getContext()).getExpenseById(expenseId);
 
+            userPreferences = requireContext().getSharedPreferences("user_settings", Context.MODE_PRIVATE);
+
+            float exchangeRate = Float.parseFloat(userPreferences.getString("euro_base_exchange_rate", "1.0"));
+            String currency = userPreferences.getString("currency", "eur");
+
             TextView tvTitle = view.findViewById(R.id.tvExpenseTitle);
             TextView tvAmount = view.findViewById(R.id.tvExpenseAmount);
             TextView tvDate = view.findViewById(R.id.tvExpenseDate);
@@ -54,9 +64,11 @@ public class ExpenseDetailFragment extends Fragment {
             TextView tvNote = view.findViewById(R.id.tvExpenseNote);
 
             if (expense != null) {
+                String currencyUpperCase = currency.toUpperCase();
+                float amount = (float) (expense.getAmount() * exchangeRate);
                 tvTitle.setText(expense.getTitle());
-                tvAmount.setText(String.format("Rs. %s", expense.getAmount()));
-                tvDate.setText(Helper.dateToString(expense.getDate())); // format if needed
+                tvAmount.setText(MessageFormat.format("{0} {1}", currencyUpperCase, amount));
+                tvDate.setText(Helper.dateToString(expense.getDate()));
                 tvCategory.setText(expense.getCategory().getName());
                 tvNote.setText(expense.getNote());
             } else {
