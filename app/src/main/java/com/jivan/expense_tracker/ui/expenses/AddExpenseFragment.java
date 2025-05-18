@@ -113,6 +113,11 @@ public class AddExpenseFragment extends Fragment {
             expenseRepository.addExpense(expense);
 
             Toast.makeText(getContext(), "Expense saved!", Toast.LENGTH_SHORT).show();
+
+            requireParentFragment().getChildFragmentManager().beginTransaction()
+                    .replace(R.id.expensesFragmentContainer, new ExpenseListFragment())
+                    .addToBackStack("expense_list")
+                    .commit();
         } catch (ParseException | NumberFormatException e) {
             Toast.makeText(getContext(), "Invalid input", Toast.LENGTH_SHORT).show();
         }
