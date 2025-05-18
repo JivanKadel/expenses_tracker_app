@@ -1,6 +1,5 @@
 package com.jivan.expense_tracker.ui.expenses;
 
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,14 +12,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.jivan.expense_tracker.R;
-import com.jivan.expense_tracker.data.AppDatabaseHelper;
 import com.jivan.expense_tracker.data.expenses.ExpenseRepository;
-import com.jivan.expense_tracker.data.expenses.ExpensesDatabaseHelper;
 import com.jivan.expense_tracker.domain.expenses.Expense;
 
 import java.util.List;
@@ -31,7 +27,7 @@ public class ExpenseListFragment extends Fragment {
     private RecyclerView recyclerExpensesList;
     private ExpenseAdapter adapter;
     private ExpenseRepository expenseRepository;
-    private AppDatabaseHelper dbHelper;
+
 
     @Nullable
     @Override
@@ -48,8 +44,6 @@ public class ExpenseListFragment extends Fragment {
         recyclerExpensesList = view.findViewById(R.id.recyclerExpensesList);
         recyclerExpensesList.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        dbHelper = new AppDatabaseHelper(getContext());
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         expenseRepository = new ExpenseRepository(getContext());
 
